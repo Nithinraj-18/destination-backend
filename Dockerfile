@@ -10,4 +10,4 @@ RUN ./gradlew build
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "build/libs/backend-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "build/libs/backend-1.0.0.jar"]git add .
