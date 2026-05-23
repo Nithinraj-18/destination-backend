@@ -102,7 +102,7 @@ public class EmailService {
                 }
         }
 
-        @Async
+       
         public void sendOrderEmail(Order order) {
 
                 System.out.println("EMAIL METHOD STARTED");

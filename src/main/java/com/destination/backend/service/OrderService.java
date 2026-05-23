@@ -19,8 +19,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final OrderRepository orderRepository; 
-    private final EmailService emailService; 
+    private final OrderRepository orderRepository;
+    private final EmailService emailService;
 
     public Order createOrder(OrderRequestDTO request) {
 
@@ -79,7 +79,13 @@ public class OrderService {
 
         // ✅ SEND EMAIL (SAFE)
         try {
-            emailService.sendOrderEmail(savedOrder);
+            new Thread(() -> {
+                try {
+                    emailService.sendOrderEmail(savedOrder);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }).start();
         } catch (Exception e) {
             System.out.println("Email trigger failed: " + e.getMessage());
         }
