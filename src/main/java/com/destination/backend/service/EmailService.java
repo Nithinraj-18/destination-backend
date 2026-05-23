@@ -373,12 +373,19 @@ public class EmailService {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 headers.setBearerAuth(apiKey);
+                // ✅ Add professional footer with contact email
+                String finalText = text +
+                                "\n\n----------------------------\n" +
+                                "Need help or have questions?\n" +
+                                "Contact: destination56662025@gmail.com\n" +
+                                "We usually respond within 24 hours.\n" +
+                                "----------------------------";
 
                 Map<String, Object> body = new HashMap<>();
-                body.put("from", "onboarding@resend.dev"); // default resend domain
+                body.put("from", "No Reply - Destination <onboarding@resend.dev>"); // default resend domain
                 body.put("to", to);
                 body.put("subject", subject);
-                body.put("text", text);
+                body.put("text", finalText);
 
                 HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
