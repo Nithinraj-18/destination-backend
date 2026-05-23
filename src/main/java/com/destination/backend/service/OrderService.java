@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@EnableAsync
 public class OrderService {
 
     private final OrderRepository orderRepository; 

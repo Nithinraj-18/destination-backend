@@ -102,67 +102,71 @@ public class EmailService {
                 }
         }
 
-       
+        @Async
         public void sendOrderEmail(Order order) {
 
-                StringBuilder text = new StringBuilder();
+                System.out.println("EMAIL METHOD STARTED");
 
-                text.append("New Order Received\n\n");
-                text.append("Customer Name: ")
-                                .append(order.getUserDetails().getName())
-                                .append("\n");
+                try {
 
-                text.append("Mobile: ")
-                                .append(order.getUserDetails().getMobileNumber())
-                                .append("\n\n");
+                        StringBuilder text = new StringBuilder();
 
-                text.append("Products:\n");
-
-                for (OrderItem item : order.getItems()) {
-
-                        text.append(item.getProductName())
-                                        .append(" x ")
-                                        .append(item.getQuantity())
+                        text.append("New Order Received\n\n");
+                        text.append("Customer Name: ")
+                                        .append(order.getUserDetails().getName())
                                         .append("\n");
-                }
 
-                text.append("\nTotal Price: ")
-                                .append(order.getTotalPrice());
+                        text.append("Mobile: ")
+                                        .append(order.getUserDetails().getMobileNumber())
+                                        .append("\n\n");
 
-                List<Admin> admins = adminRepository.findAll();
+                        text.append("Products:\n");
 
-                for (Admin admin : admins) {
+                        for (OrderItem item : order.getItems()) {
 
-                        try {
-
-                                if (admin.getEmail() != null &&
-                                                !admin.getEmail().isBlank()) {
-
-                                        SimpleMailMessage message = new SimpleMailMessage();
-
-                                        message.setFrom(fromEmail);
-
-                                        message.setTo(admin.getEmail());
-
-                                        message.setSubject("New Order Received");
-
-                                        message.setText(text.toString());
-
-                                        mailSender.send(message);
-
-                                        System.out.println(
-                                                        "Mail sent to: "
-                                                                        + admin.getEmail());
-                                }
-
-                        } catch (Exception e) {
-
-                                System.out.println(
-                                                "Failed for email: "
-                                                                + admin.getEmail());
-
-                                e.printStackTrace();
+                                text.append(item.getProductName())
+                                                .append(" x ")
+                                                .append(item.getQuantity())
+                                                .append("\n");
                         }
+
+                        text.append("\nTotal Price: ")
+                                        .append(order.getTotalPrice());
+
+                        List<Admin> admins = adminRepository.findAll();
+
+                        System.out.println("ADMINS COUNT: " + admins.size());
+
+                        for (Admin admin : admins) {
+
+                                try {
+
+                                        if (admin.getEmail() != null &&
+                                                        !admin.getEmail().isBlank()) {
+
+                                                System.out.println("SENDING TO: " + admin.getEmail());
+
+                                                SimpleMailMessage message = new SimpleMailMessage();
+
+                                                message.setFrom(fromEmail);
+                                                message.setTo(admin.getEmail());
+                                                message.setSubject("New Order Received");
+                                                message.setText(text.toString());
+
+                                                mailSender.send(message);
+
+                                                System.out.println("MAIL SENT SUCCESS");
+                                        }
+
+                                } catch (Exception e) {
+                                        System.out.println("FAILED FOR: " + admin.getEmail());
+                                        e.printStackTrace();
+                                }
+                        }
+
+                } catch (Exception e) {
+                        System.out.println("MAIN EMAIL ERROR");
+                        e.printStackTrace();
                 }
         }
 
