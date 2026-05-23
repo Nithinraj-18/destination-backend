@@ -262,7 +262,7 @@ public class EmailService {
 
         private final RestTemplate restTemplate = new RestTemplate();
 
-        @Value("${resend.api.key : re_Gx6aJEcD_MD9GZg4deweTYuMdBefW2BAP}")
+        @Value("${resend.api.key : re_cjMY31iR_86aMe4Kvrrs5dYcpMErkYc83}")
         private String apiKey;
 
         public EmailService(AdminRepository adminRepository) {
