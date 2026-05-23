@@ -102,7 +102,6 @@
 //                 }
 //         }
 
-       
 //         public void sendOrderEmail(Order order) {
 
 //                 System.out.println("EMAIL METHOD STARTED");
@@ -236,9 +235,6 @@
 //         }
 // }
 
-
-
-
 package com.destination.backend.service;
 
 import java.util.HashMap;
@@ -262,141 +258,137 @@ import com.destination.backend.repository.AdminRepository;
 @Service
 public class EmailService {
 
-    private final AdminRepository adminRepository;
+        private final AdminRepository adminRepository;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+        private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${resend.api.key : re_Gx6aJEcD_MD9GZg4deweTYuMdBefW2BAP}")
-    private String apiKey;
+        @Value("${resend.api.key : re_Gx6aJEcD_MD9GZg4deweTYuMdBefW2BAP}")
+        private String apiKey;
 
-    public EmailService(AdminRepository adminRepository) {
-        this.adminRepository = adminRepository;
-    }
-
-    // ========================
-    // 1. TEMP PASSWORD EMAIL
-    // ========================
-    @Async
-    public void sendTempPassword(String toEmail, String tempPassword, String username) {
-
-        String subject = "Password Reset - Destination App";
-
-        String content =
-                "Dear " + username + ",\n\n" +
-                "Your temporary password is: " + tempPassword + "\n\n" +
-                "Please change it after login.\n\n" +
-                "Destination Team";
-
-        sendEmail(toEmail, subject, content);
-    }
-
-    // ========================
-    // 2. ORDER EMAIL TO ADMINS
-    // ========================
-    @Async
-    public void sendOrderEmail(Order order) {
-
-        System.out.println("EMAIL METHOD STARTED");
-
-        StringBuilder text = new StringBuilder();
-
-        text.append("New Order Received\n\n");
-        text.append("Customer Name: ")
-                .append(order.getUserDetails().getName())
-                .append("\n");
-
-        text.append("Mobile: ")
-                .append(order.getUserDetails().getMobileNumber())
-                .append("\n\n");
-
-        text.append("Products:\n");
-
-        for (OrderItem item : order.getItems()) {
-            text.append(item.getProductName())
-                    .append(" x ")
-                    .append(item.getQuantity())
-                    .append("\n");
+        public EmailService(AdminRepository adminRepository) {
+                this.adminRepository = adminRepository;
         }
 
-        text.append("\nTotal Price: ")
-                .append(order.getTotalPrice());
+        // ========================
+        // 1. TEMP PASSWORD EMAIL
+        // ========================
+        @Async
+        public void sendTempPassword(String toEmail, String tempPassword, String username) {
 
-        List<Admin> admins = adminRepository.findAll();
+                String subject = "Password Reset - Destination App";
 
-        for (Admin admin : admins) {
+                String content = "Dear " + username + ",\n\n" +
+                                "Your temporary password is: " + tempPassword + "\n\n" +
+                                "Please change it after login.\n\n" +
+                                "Destination Team";
 
-            if (admin.getEmail() != null && !admin.getEmail().isBlank()) {
-                System.out.println("SENDING TO: " + admin.getEmail());
-
-                sendEmail(
-                        admin.getEmail(),
-                        "New Order Received",
-                        text.toString()
-                );
-            }
-        }
-    }
-
-    // ========================
-    // 3. DELIVERY EMAIL
-    // ========================
-    @Async
-    public void sendDeliveryEmail(Order order) {
-
-        String userName = order.getUserDetails().getName();
-        String email = order.getUserDetails().getEmail();
-
-        StringBuilder text = new StringBuilder();
-
-        text.append("Dear ").append(userName).append(",\n\n");
-        text.append("Your order has been delivered.\n\n");
-
-        double total = 0;
-
-        for (OrderItem item : order.getItems()) {
-            text.append(item.getProductName())
-                    .append(" x ")
-                    .append(item.getQuantity())
-                    .append(" = ₹")
-                    .append(item.getTotalPrice())
-                    .append("\n");
-
-            total += item.getTotalPrice();
+                sendEmail(toEmail, subject, content);
         }
 
-        text.append("\nTotal: ₹").append(total);
+        // ========================
+        // 2. ORDER EMAIL TO ADMINS
+        // ========================
+        @Async
+        public void sendOrderEmail(Order order) {
 
-        sendEmail(email, "Order Delivered 🎉", text.toString());
-    }
+                System.out.println("EMAIL METHOD STARTED");
 
-    // ========================
-    // COMMON EMAIL METHOD (API)
-    // ========================
-    private void sendEmail(String to, String subject, String text) {
+                StringBuilder text = new StringBuilder();
 
-        String url = "https://api.resend.com/emails";
+                text.append("New Order Received\n\n");
+                text.append("Customer Name: ")
+                                .append(order.getUserDetails().getName())
+                                .append("\n");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
+                text.append("Mobile: ")
+                                .append(order.getUserDetails().getMobileNumber())
+                                .append("\n\n");
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("from", "destination56662025@gmail.com"); // default resend domain
-        body.put("to", to);
-        body.put("subject", subject);
-        body.put("text", text);
+                text.append("Products:\n");
 
-        HttpEntity<Map<String, Object>> request =
-                new HttpEntity<>(body, headers);
+                for (OrderItem item : order.getItems()) {
+                        text.append(item.getProductName())
+                                        .append(" x ")
+                                        .append(item.getQuantity())
+                                        .append("\n");
+                }
 
-        try {
-            ResponseEntity<String> response =
-                    restTemplate.postForEntity(url, request, String.class);
+                text.append("\nTotal Price: ")
+                                .append(order.getTotalPrice());
 
-            System.out.println("EMAIL SENT: " + response.getBody());
+                List<Admin> admins = adminRepository.findAll();
 
-        } catch (Exception e) {
-            System.out.println("EMAIL FAILED: " + e.getMessage());
+                for (Admin admin : admins) {
+
+                        if (admin.getEmail() != null && !admin.getEmail().isBlank()) {
+                                System.out.println("SENDING TO: " + admin.getEmail());
+
+                                sendEmail(
+                                                admin.getEmail(),
+                                                "New Order Received",
+                                                text.toString());
+                        }
+                }
         }
-    }
+
+        // ========================
+        // 3. DELIVERY EMAIL
+        // ========================
+        @Async
+        public void sendDeliveryEmail(Order order) {
+
+                String userName = order.getUserDetails().getName();
+                String email = order.getUserDetails().getEmail();
+
+                StringBuilder text = new StringBuilder();
+
+                text.append("Dear ").append(userName).append(",\n\n");
+                text.append("Your order has been delivered.\n\n");
+
+                double total = 0;
+
+                for (OrderItem item : order.getItems()) {
+                        text.append(item.getProductName())
+                                        .append(" x ")
+                                        .append(item.getQuantity())
+                                        .append(" = ₹")
+                                        .append(item.getTotalPrice())
+                                        .append("\n");
+
+                        total += item.getTotalPrice();
+                }
+
+                text.append("\nTotal: ₹").append(total);
+
+                sendEmail(email, "Order Delivered 🎉", text.toString());
+        }
+
+        // ========================
+        // COMMON EMAIL METHOD (API)
+        // ========================
+        private void sendEmail(String to, String subject, String text) {
+
+                String url = "https://api.resend.com/emails";
+
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.setBearerAuth(apiKey);
+
+                Map<String, Object> body = new HashMap<>();
+                body.put("from", "onboarding@resend.dev"); // default resend domain
+                body.put("to", to);
+                body.put("subject", subject);
+                body.put("text", text);
+
+                HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+                try {
+                        ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+                        System.out.println("EMAIL SENT: " + response.getBody());
+
+                } catch (Exception e) {
+                        System.out.println("EMAIL FAILED: " + e.getMessage());
+                }
+        }
 }
