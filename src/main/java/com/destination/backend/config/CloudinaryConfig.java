@@ -16,7 +16,7 @@ public class CloudinaryConfig {
 
         Map<String, String> config = new HashMap<>();
 
-        config.put("cloud_name", "productImage");
+        config.put("cloud_name", "dgdekv1q7");
         config.put("api_key", "324546228526259");
         config.put("api_secret", "MEmoW4AbvIhbLPSWmSwpwL_idXA");
 
