@@ -114,6 +114,7 @@ public class ProductService {
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
         product.setCategory(request.getCategory());
+        product.setOutOfStock(request.getOutOfStock());
 
         try {
             if (image != null && !image.isEmpty()) {

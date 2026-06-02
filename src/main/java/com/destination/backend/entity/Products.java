@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +34,8 @@ public class Products {
     private double price;
     private String imageUrl;
     private String category;
+    @Default
+    private Boolean outOfStock = false;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

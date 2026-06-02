@@ -5,14 +5,12 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.destination.backend.dto.AdminOrderResponse;
-import com.destination.backend.dto.MonthlyRevenueDto;
-import com.destination.backend.dto.MonthlyRevenueDto;
-import com.destination.backend.dto.MonthlyRevenueDto;
 import com.destination.backend.dto.MonthlyRevenueDto;
 import com.destination.backend.dto.OrderItemDTO;
 import com.destination.backend.dto.UserDetailsDTO;
@@ -167,12 +165,14 @@ public class AdminOderViewService {
         if (monthlyRevenue != null) {
             double existingRevenue = monthlyRevenue.getRevenue();
             monthlyRevenue.setRevenue(existingRevenue + revenue);
+            monthlyRevenue.setTotalOrders(monthlyRevenue.getTotalOrders() + 1);
 
         } else {
             monthlyRevenue = new MonthlyRevenue();
             monthlyRevenue.setMonth(month);
             monthlyRevenue.setYear(year);
             monthlyRevenue.setRevenue(revenue);
+            monthlyRevenue.setTotalOrders(1L);
         }
 
         // 💾 SAVE REVENUE
@@ -184,6 +184,31 @@ public class AdminOderViewService {
 
     public List<MonthlyRevenueDto> getMonthlyRevenue() {
         List<MonthlyRevenue> revenues = monthlyRevenueRepository.findAll();
+        Map<String, Integer> monthOrder = Map.ofEntries(
+                Map.entry("January", 1),
+                Map.entry("February", 2),
+                Map.entry("March", 3),
+                Map.entry("April", 4),
+                Map.entry("May", 5),
+                Map.entry("June", 6),
+                Map.entry("July", 7),
+                Map.entry("August", 8),
+                Map.entry("September", 9),
+                Map.entry("October", 10),
+                Map.entry("November", 11),
+                Map.entry("December", 12));
+
+        revenues.sort((a, b) -> {
+            int yearCompare = Integer.compare(b.getYear(), a.getYear());
+
+            if (yearCompare != 0) {
+                return yearCompare;
+            }
+
+            return Integer.compare(
+                    monthOrder.get(b.getMonth()),
+                    monthOrder.get(a.getMonth()));
+        });
         List<MonthlyRevenueDto> revenueDtos = new ArrayList<>();
 
         for (MonthlyRevenue revenue : revenues) {
@@ -191,6 +216,7 @@ public class AdminOderViewService {
             dto.setMonth(revenue.getMonth());
             dto.setYear(revenue.getYear());
             dto.setRevenue(revenue.getRevenue());
+            dto.setTotalOrders(revenue.getTotalOrders());
             revenueDtos.add(dto);
         }
 

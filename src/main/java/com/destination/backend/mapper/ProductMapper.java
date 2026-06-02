@@ -12,6 +12,7 @@ public class ProductMapper {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .category(request.getCategory()) 
+                .outOfStock(request.getOutOfStock() != null ? request.getOutOfStock() : false)
                 .build();
     }
 
@@ -23,6 +24,7 @@ public class ProductMapper {
                 .price(product.getPrice())
                 .imageUrl(product.getImageUrl())
                 .category(product.getCategory()) 
+                .outOfStock(product.getOutOfStock())
                 .build();
     }
 }

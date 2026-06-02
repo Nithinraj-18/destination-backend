@@ -10,6 +10,7 @@ public class ProductRequestDto {
     private double price;
     private String category;
     private String imageUrl;
+    private Boolean outOfStock;
 
     
 }

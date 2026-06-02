@@ -22,5 +22,6 @@ public class MonthlyRevenue {
     private String month;
     private int year;
     private double revenue;
+    private Long totalOrders;
 
 }
