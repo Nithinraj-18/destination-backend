@@ -115,9 +115,9 @@ public class EmailService {
                                         .append(order.getUserDetails().getName())
                                         .append("\n");
 
-                        text.append("Mobile: ")
-                                        .append(order.getUserDetails().getMobileNumber())
-                                        .append("\n\n");
+                        // text.append("Mobile: ")
+                        //                 .append(order.getUserDetails().getMobileNumber())
+                        //                 .append("\n\n");
 
                         text.append("Products:\n");
 
