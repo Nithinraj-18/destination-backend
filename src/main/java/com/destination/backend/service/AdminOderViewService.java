@@ -90,7 +90,8 @@ public class AdminOderViewService {
                 itemDTO.setPrice(item.getPrice());
                 itemDTO.setQuantity(item.getQuantity());
                 itemDTO.setTotalPrice(item.getTotalPrice());
-
+                itemDTO.setPaymentMode(item.getPaymentMode());
+                itemDTO.setPaymentScreenshot(item.getPaymentScreenshot());
                 itemDTOList.add(itemDTO);
             }
 

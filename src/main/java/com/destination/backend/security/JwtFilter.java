@@ -39,6 +39,11 @@ public class JwtFilter extends GenericFilter {
             return;
         }
 
+        if(path.startsWith("/payment-screenshots/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         // ✅ Public APIs
         if (path.startsWith("/api/admin/login") ||
                 path.startsWith("/api/admin/create") ||

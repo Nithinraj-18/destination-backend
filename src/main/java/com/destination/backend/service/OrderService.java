@@ -3,8 +3,8 @@ package com.destination.backend.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.destination.backend.dto.OrderItemDTO;
 import com.destination.backend.dto.OrderRequestDTO;
@@ -21,8 +21,9 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final EmailService emailService;
+    private final FileStorageService fileStorageService;
 
-    public Order createOrder(OrderRequestDTO request) {
+    public Order createOrder(OrderRequestDTO request, MultipartFile file) {
 
         if (request == null || request.getItems() == null || request.getItems().isEmpty()) {
             throw new RuntimeException("Order items cannot be empty");
@@ -60,7 +61,45 @@ public class OrderService {
                     .price(dto.getPrice())
                     .quantity(dto.getQuantity())
                     .totalPrice(dto.getTotalPrice()) // 🔥 FROM FRONTEND
+                    .paymentMode(dto.getPaymentMode())// 🔥 FROM FRONTEND
                     .build();
+
+            // String paymentScreenshotUrl = null;
+
+            // try {
+
+            // if (file != null && !file.isEmpty()) {
+
+            // String fileName = System.currentTimeMillis() + "_" +
+            // file.getOriginalFilename();
+
+            // // Save in D drive
+            // Path uploadPath = Paths.get("E:\\Destination\\payment-screenshots");
+
+            // // Create folder if not exists
+            // if (!Files.exists(uploadPath)) {
+            // Files.createDirectories(uploadPath);
+            // }
+
+            // // Save file
+            // Path filePath = uploadPath.resolve(fileName);
+
+            // Files.copy(
+            // file.getInputStream(),
+            // filePath,
+            // StandardCopyOption.REPLACE_EXISTING);
+
+            // // URL to save in DB
+            // paymentScreenshotUrl = "http://localhost:8082/payment-screenshots/" +
+            // fileName;
+            // }
+
+            // } catch (Exception e) {
+            // throw new RuntimeException("Failed to upload screenshot", e);
+            // }
+
+            String paymentScreenshotUrl = fileStorageService.uploadFile(file);
+            item.setPaymentScreenshot(paymentScreenshotUrl);
 
             orderItems.add(item);
         }

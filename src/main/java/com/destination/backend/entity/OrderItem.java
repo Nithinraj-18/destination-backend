@@ -37,6 +37,8 @@ public class OrderItem {
     private double price;
     private int quantity;
     private double totalPrice;
+    private String paymentMode;
+    private String paymentScreenshot; // 🔥 NEW FIELD FOR SCREENSHOT
 
     @CreationTimestamp
     private LocalDateTime createdAt;
