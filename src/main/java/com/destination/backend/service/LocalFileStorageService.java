@@ -16,9 +16,12 @@ public class LocalFileStorageService implements FileStorageService {
     @Override
     public String uploadFile(MultipartFile file) {
 
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
         try {
-            String fileName =
-                    System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
 
             Path uploadPath = Paths.get("E:\\Destination\\payment-screenshots");
 

@@ -21,12 +21,15 @@ public class CloudinaryStorageService implements FileStorageService {
     @Override
     public String uploadFile(MultipartFile file) {
 
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
         try {
 
             Map uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
-                    new HashMap<>()
-            );
+                    new HashMap<>());
 
             return uploadResult.get("url").toString();
 
