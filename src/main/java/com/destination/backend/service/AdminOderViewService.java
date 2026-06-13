@@ -41,11 +41,10 @@ public class AdminOderViewService {
     public List<AdminOrderResponse> getAllOrders(String search) {
         List<Order> orders;
         if (search == null || search.trim().isEmpty()) {
-            orders = orderRepository.findAll();
+            orders = orderRepository.findAllByOrderByCreatedAtDesc();
         } else {
             orders = orderRepository
-                    .findByUserDetails_NameContainingIgnoreCase(search);
-
+                    .findByUserDetails_NameContainingIgnoreCaseOrderByCreatedAtDesc(search);
         }
         List<AdminOrderResponse> responseList = new ArrayList<>();
 
