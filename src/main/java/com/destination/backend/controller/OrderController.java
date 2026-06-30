@@ -37,7 +37,7 @@ public class OrderController {
             orderService.createOrder(request, file);
             ApiResponse<Object> response = new ApiResponse<>(
                     "success",
-                    "Order placed successfully",
+                    "Order confirmed successfully 🎉 We’ll contact you shortly with updates.",
                     null);
 
             return ResponseEntity.ok(response);

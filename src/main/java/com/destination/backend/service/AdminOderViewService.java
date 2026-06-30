@@ -1,5 +1,6 @@
 package com.destination.backend.service;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -7,7 +8,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.destination.backend.dto.AdminOrderResponse;
@@ -102,16 +108,12 @@ public class AdminOderViewService {
         return responseList;
     }
 
-    public boolean deleteOrderById(String orderId) {
+    public int deleteOrders(List<String> orderIds) {
+        List<Order> orders = orderRepository.findAllById(orderIds);
+        int count = orders.size();
+        orderRepository.deleteAll(orders);
 
-        Optional<Order> optionalOrder = orderRepository.findById(orderId);
-
-        if (optionalOrder.isPresent()) {
-            orderRepository.delete(optionalOrder.get());
-            return true;
-        }
-
-        return false;
+        return count;
     }
 
     public List<UserDetailsDTO> getAllUsers() {
@@ -221,6 +223,102 @@ public class AdminOderViewService {
         }
 
         return revenueDtos;
+    }
+
+    public byte[] exportOrdersToExcel(List<Order> orders) {
+
+        try (
+                Workbook workbook = new XSSFWorkbook();
+                ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            Sheet sheet = workbook.createSheet(
+                    "Orders");
+            Row header = sheet.createRow(
+                    0);
+            String[] columns = {
+                    "S.No",
+                    "Ordered Date",
+                    "Customer Name",
+                    "Email",
+                    "Mobile Number",
+                    "Address",
+                    "Product Names",
+                    "Total Price",
+                    "Payment Mode"
+            };
+
+            for (int i = 0; i < columns.length; i++) {
+                header
+                        .createCell(i)
+                        .setCellValue(
+                                columns[i]);
+            }
+
+            int rowNum = 1;
+            for (Order order : orders) {
+                Row row = sheet.createRow(
+                        rowNum);
+                OrderUserDetails user = order.getUserDetails();
+                List<OrderItem> items = order.getItems();
+                String products = items
+                        .stream()
+                        .map(
+                                OrderItem::getProductName)
+                        .collect(
+                                Collectors.joining(
+                                        ", "));
+
+                String payments = items
+                        .stream()
+                        .map(
+                                OrderItem::getPaymentMode)
+                        .distinct()
+                        .collect(
+                                Collectors.joining(
+                                        ", "));
+
+                row.createCell(0)
+                        .setCellValue(
+                                rowNum);
+                row.createCell(1)
+                        .setCellValue(
+                                String.valueOf(
+                                        order.getCreatedAt()));
+                row.createCell(2)
+                        .setCellValue(
+                                user.getName());
+                row.createCell(3)
+                        .setCellValue(
+                                user.getEmail());
+                row.createCell(4)
+                        .setCellValue(
+                                user.getMobileNumber());
+                row.createCell(5)
+                        .setCellValue(
+                                user.getAddress());
+                row.createCell(6)
+                        .setCellValue(
+                                products);
+                row.createCell(7)
+                        .setCellValue(
+                                order.getTotalPrice());
+                row.createCell(8)
+                        .setCellValue(
+                                payments);
+                rowNum++;
+
+            }
+
+            for (int i = 0; i < columns.length; i++) {
+                sheet.autoSizeColumn(
+                        i);
+            }
+            workbook.write(out);
+            return out.toByteArray();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
