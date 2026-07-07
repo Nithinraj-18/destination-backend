@@ -244,7 +244,8 @@ public class AdminOderViewService {
                     "Address",
                     "Product Names",
                     "Total Price",
-                    "Payment Mode"
+                    "Payment Mode",
+                    "Status"
             };
 
             for (int i = 0; i < columns.length; i++) {
@@ -305,6 +306,9 @@ public class AdminOderViewService {
                 row.createCell(8)
                         .setCellValue(
                                 payments);
+                row.createCell(9)
+                        .setCellValue(
+                                order.getStatus());
                 rowNum++;
 
             }
