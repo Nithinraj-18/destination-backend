@@ -97,6 +97,10 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<Products> searchProducts(String keyword) {
+        return productRepository.searchByProductName("%" + keyword + "%");
+    }
+
     public ProductResponseDto getProductById(String id) {
         Products product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));

@@ -1,7 +1,7 @@
 package com.destination.backend.controller;
 
 import java.util.List;
-
+import com.destination.backend.entity.Products;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,6 +53,15 @@ public class ProductController {
     public ResponseEntity<List<ProductResponseDto>> getAll() {
         List<ProductResponseDto> data = productService.getAllProducts();
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProducts(
+            @RequestParam("keyword") String keyword) {
+
+        List<Products> products = productService.searchProducts(keyword);
+
+        return ResponseEntity.ok(products);
     }
 
     // ✅ GET BY ID

@@ -52,7 +52,8 @@ public class JwtFilter extends GenericFilter {
                 path.startsWith("/api/admin/delete") ||
                 path.startsWith("/api/admin/getAll") ||
                 path.startsWith("/api/orders") ||
-                path.startsWith("/api/products/getAll")) {
+                path.startsWith("/api/products/getAll")||
+                path.startsWith("/api/products/search")) {
 
             chain.doFilter(request, response);
             return;

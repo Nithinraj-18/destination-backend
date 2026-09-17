@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/api/admin/delete",
                                 "/api/admin/getAll",
                                 "/api/products/getAll",
+                                "/api/products/search",
                                 "/api/orders/**")
                         .permitAll()
                         .requestMatchers("/product-image/**").permitAll()
